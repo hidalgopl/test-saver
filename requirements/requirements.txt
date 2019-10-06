@@ -1,0 +1,3 @@
+pony
+asyncio-nats-client
+ujson

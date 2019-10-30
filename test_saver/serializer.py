@@ -3,6 +3,7 @@ from typing import Any, Union, Callable
 from pony import orm
 
 from test_saver.db_handlers import TestPonySerializer
+from test_saver.exceptions import TestMsgMalformed
 from test_saver.models import TestDTO
 
 

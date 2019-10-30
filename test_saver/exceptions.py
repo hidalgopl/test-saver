@@ -4,3 +4,7 @@ class TestSuiteNotExist(Exception):
 
 class ConfigError(Exception):
     pass
+
+
+class TestMsgMalformed(Exception):
+    pass

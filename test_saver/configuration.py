@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from test_saver.exceptions import ConfigError
 
-log = logging.getLogger("test_saver")
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -29,5 +29,5 @@ def load_config() -> Config:
         )
     except KeyError:
         raise ConfigError("please all required env variables")
-    log.info(f"running with: {config}")
+    print(f"running with: {config}")
     return config

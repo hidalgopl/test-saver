@@ -35,6 +35,3 @@ class NATSHandler:
     async def graceful_shutdown(self):
         await self.nats_client.drain()
         await self.nats_client.close()
-
-
-    async

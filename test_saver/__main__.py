@@ -2,8 +2,6 @@ import asyncio
 import logging
 import ujson
 
-from nats.aio.client import Client as NATS
-
 from test_saver.configuration import load_config
 from test_saver.models import db
 from test_saver.nats_client import NATSHandler
@@ -33,7 +31,6 @@ async def run(nats_url, nats_subject):
         nats_url,
         logger=log
     )
-    # # Simple publisher and async subscriber via coroutine.
     await nats_client.sub(nats_subject, handler=message_handler)
 
 

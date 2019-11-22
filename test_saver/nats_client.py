@@ -1,26 +1,27 @@
 import logging
+from typing import Callable
 
 from nats.aio.client import Client
 
 
 class NATSHandler:
-    def __init__(self, nats_url: str, logger: logging.Logger):
+    def __init__(self, nats_url: str, logger: logging.Logger, loop):
         self.nats_client = Client()
         self.nats_url = nats_url
         self.log = logger
-        self.connect()
+        self.loop = loop
 
-    @classmethod
-    async def connect(cls):
-        await cls.nats_client.connect(
-            cls.nats_client,
-            error_cb=cls.error_callback
+    async def connect(self):
+        await self.nats_client.connect(
+            self.nats_url,
+            loop=self.loop,
+            error_cb=self.error_callback
         )
 
     async def error_callback(self, msg):
         self.log.exception(msg)
 
-    async def sub(self, subject: str, handler: function):
+    async def sub(self, subject: str, handler):
         await self.nats_client.subscribe(
             subject,
             cb=handler

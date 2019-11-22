@@ -3,10 +3,10 @@ from typing import Any, Union, Callable
 from pony import orm
 
 from test_saver.db_handlers import TestPonySerializer
-from test_saver.models import TestDTO
+from test_saver.models import TestDTO, TestSuiteDTO
 
 
-class TestSerializer:
+class TestSuiteSerializer:
     def __init__(
         self,
         msg: Any,
@@ -19,10 +19,16 @@ class TestSerializer:
         # clean architecture, save us from sticking to one ORM
 
     def decode_data(self):
-        return TestDTO(
-            code=self.data["code"],
-            result=self.data["result"],
-            suite_id=self.data["suite_id"],
+        tests_dto = [TestDTO(
+            test_code=test["test_code"],
+            result=test["result"],
+            test_suite_id=self.data["test_suite_id"],
+        ) for test in self.data["tests"]]
+
+        return TestSuiteDTO(
+            test_suite_id=self.data["test_suite_id"],
+            url=self.data["url"],
+            tests=tests_dto
         )
 
     def save_to_db(self):

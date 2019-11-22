@@ -1,21 +1,21 @@
 from pony import orm
 
-from test_saver.exceptions import TestSuiteNotExist
-from test_saver.models import TestDTO, SecTestSuite, SecTest
+from test_saver.models import TestSuiteDTO, SecTestSuite, SecTest
 
 
 class TestPonySerializer:
-    def __init__(self, db: orm.Database, dto: TestDTO):
+    def __init__(self, db: orm.Database, dto: TestSuiteDTO):
         self.db = db
         self.dto = dto
 
     @orm.db_session
     def save(self):
-        try:
-            sec_test_suite = SecTestSuite[self.dto.suite_id]
-        except orm.core.ObjectNotFound:
-            raise TestSuiteNotExist(
-                f"sec_test_suite with given id: {self.dto.suite_id} does not exist"
-            )
-        SecTest(result=self.dto.result, code=self.dto.code, suite=sec_test_suite)
+        # TODO  - get rid of this map
+        suite = SecTestSuite(url=self.dto.url, id=self.dto.test_suite_id)
+        r_map = {"passed": 0, "failed": 1, "error": 2}
+        tests = [
+            SecTest(result=r_map[test.result], code=test.test_code, suite=suite)
+            for test in self.dto.tests
+        ]
+
         orm.commit()

@@ -5,7 +5,7 @@ import ujson
 from test_saver.configuration import load_config
 from test_saver.models import db
 from test_saver.nats_client import NATSHandler
-from test_saver.serializer import TestSerializer
+from test_saver.serializer import TestSuiteSerializer
 
 log = logging.getLogger(__name__)
 
@@ -14,24 +14,30 @@ async def message_handler(msg):
     subject = msg.subject
     reply = msg.reply
     data = ujson.loads(msg.data.decode())
-    serializer = TestSerializer(db=db, msg=data)
+    serializer = TestSuiteSerializer(db=db, msg=data)
     try:
+        print("saving to db")
         serializer.save_to_db()
         log.info(
             "Received a message on '{subject} {reply}': {data}".format(
                 subject=subject, reply=reply, data=data
             )
         )
-    except KeyError:
+        print("saved")
+    except KeyError as e:
+        print("msg malformed")
+        print(e)
         log.info("msg malformed")
 
 
-async def run(nats_url, nats_subject):
+async def run(loop, nats_url, nats_subject):
     nats_client = NATSHandler(
         nats_url,
-        logger=log
+        logger=log,
+        loop=loop
     )
-    await nats_client.sub(nats_subject, handler=message_handler)
+    await nats_client.connect()
+    await nats_client.sub(nats_subject, message_handler)
 
 
 # async def graceful_shutdown(nats_client):
@@ -47,10 +53,12 @@ if __name__ == "__main__":
     db.generate_mapping(create_tables=True)
     log.info("db binded")
     loop = asyncio.get_event_loop()
-    nats_url = f"{config.nats_host}:{config.nats_port}"
+    nats_url = f"{config.nats_user}:{config.nats_pass}@{config.nats_host}:{config.nats_port}"
+    print(f"using url: {nats_url}")
     try:
         loop.create_task(
             run(
+                loop=loop,
                 nats_url=nats_url,
                 nats_subject=config.nats_subject,
             )

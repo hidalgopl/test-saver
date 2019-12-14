@@ -31,11 +31,7 @@ async def message_handler(msg):
 
 
 async def run(loop, nats_url, nats_subject):
-    nats_client = NATSHandler(
-        nats_url,
-        logger=log,
-        loop=loop
-    )
+    nats_client = NATSHandler(nats_url, logger=log, loop=loop)
     await nats_client.connect()
     await nats_client.sub(nats_subject, message_handler)
 
@@ -46,22 +42,22 @@ async def run(loop, nats_url, nats_subject):
 if __name__ == "__main__":
     config = load_config()
     db.bind(
-        provider="sqlite",
-        filename="{}{}{}".format(config.db_host, config.db_user, config.db_pass),
-        create_db=True,
+        provider="postgres",
+        user=config.db_user,
+        password=config.db_pass,
+        host=config.db_host,
+        database=config.db_name,
     )
-    db.generate_mapping(create_tables=True)
+    db.generate_mapping()
     log.info("db binded")
     loop = asyncio.get_event_loop()
-    nats_url = f"{config.nats_user}:{config.nats_pass}@{config.nats_host}:{config.nats_port}"
+    nats_url = (
+        f"{config.nats_user}:{config.nats_pass}@{config.nats_host}:{config.nats_port}"
+    )
     print(f"using url: {nats_url}")
     try:
         loop.create_task(
-            run(
-                loop=loop,
-                nats_url=nats_url,
-                nats_subject=config.nats_subject,
-            )
+            run(loop=loop, nats_url=nats_url, nats_subject=config.nats_subject)
         )
         loop.run_forever()
     except KeyboardInterrupt:
@@ -69,4 +65,3 @@ if __name__ == "__main__":
     finally:
         # loop.run_until_complete(graceful_shutdown(nc))
         loop.close()
-

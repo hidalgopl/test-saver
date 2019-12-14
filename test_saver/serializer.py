@@ -28,7 +28,7 @@ class TestSuiteSerializer:
         return TestSuiteDTO(
             test_suite_id=self.data["test_suite_id"],
             url=self.data["url"],
-            tests=tests_dto
+            tests=tests_dto,
         )
 
     def save_to_db(self):

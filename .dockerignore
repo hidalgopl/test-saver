@@ -1,2 +1,6 @@
 tests/
 .pytest_cache/
+.git
+.idea
+*__pycache__*
+*.pyc

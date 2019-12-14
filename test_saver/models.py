@@ -16,6 +16,8 @@ class SecTestSuite(db.Entity):
     id = orm.PrimaryKey(str, default=rand_s)
     url = orm.Required(str)
     tests = orm.Set("SecTest")
+    created = orm.Required(datetime, default=datetime.utcnow)
+    modified = orm.Required(datetime, default=datetime.utcnow)
 
 
 @dataclass

@@ -1,3 +1,4 @@
 pony
 asyncio-nats-client
 ujson
+psycopg2

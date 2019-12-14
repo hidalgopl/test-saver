@@ -17,6 +17,7 @@ class Config:
     db_host: str
     db_user: str
     db_pass: str
+    db_name: str
 
 
 def load_config() -> Config:
@@ -30,8 +31,9 @@ def load_config() -> Config:
             db_host=os.environ["DB_HOST"],
             db_user=os.environ["DB_USER"],
             db_pass=os.environ["DB_PASS"],
+            db_name=os.environ["DB_NAME"]
         )
     except KeyError:
-        raise ConfigError("please all required env variables")
+        raise ConfigError("please set all required env variables")
     print(f"running with: {config}")
     return config

@@ -18,6 +18,7 @@ class SecTestSuite(db.Entity):
     tests = orm.Set("SecTest")
     created = orm.Required(datetime, default=datetime.utcnow)
     modified = orm.Required(datetime, default=datetime.utcnow)
+    user_id = orm.Required(str)
 
 
 @dataclass
@@ -29,9 +30,10 @@ class TestDTO:
 
 @dataclass
 class TestSuiteDTO:
-    test_suite_id : str
+    test_suite_id: str
     url: str
     tests: list
+    user_id: str
 
 
 class SecTest(db.Entity):

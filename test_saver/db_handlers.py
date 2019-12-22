@@ -17,6 +17,7 @@ class TestPonySerializer:
             id=self.dto.test_suite_id,
             created=datetime.utcnow(),
             modified=datetime.utcnow(),
+            user_id=self.dto.user_id
         )
         r_map = {"passed": 0, "failed": 1, "error": 2}
         tests = [

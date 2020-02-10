@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from secrets import token_urlsafe
-from uuid import UUID, uuid4
 
 from pony import orm
 

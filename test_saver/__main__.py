@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import rollbar
 import ujson
 
 from test_saver.configuration import load_config
@@ -30,10 +31,14 @@ async def message_handler(msg):
         log.info("msg malformed")
 
 
-async def run(loop, nats_url, nats_subject):
+async def run(loop, nats_url, nats_subject, rollbar):
     nats_client = NATSHandler(nats_url, logger=log, loop=loop)
     await nats_client.connect()
-    await nats_client.sub(nats_subject, message_handler)
+    try:
+        await nats_client.sub(nats_subject, message_handler)
+    except Exception as e:
+        log.error(e)
+        rollbar.report_exc_info()
 
 
 # async def graceful_shutdown(nats_client):
@@ -48,6 +53,10 @@ if __name__ == "__main__":
         host=config.db_host,
         database=config.db_name,
     )
+    rollbar.init(
+        config.rollbar_token,
+        "production"
+    )
     db.generate_mapping()
     log.info("db binded")
     loop = asyncio.get_event_loop()
@@ -57,7 +66,7 @@ if __name__ == "__main__":
     print(f"using url: {nats_url}")
     try:
         loop.create_task(
-            run(loop=loop, nats_url=nats_url, nats_subject=config.nats_subject)
+            run(loop=loop, nats_url=nats_url, nats_subject=config.nats_subject, rollbar=rollbar)
         )
         loop.run_forever()
     except KeyboardInterrupt:

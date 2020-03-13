@@ -7,14 +7,12 @@
           - image: circleci/buildpack-deps:stretch
     jobs:
       test:
-        executor: python/default
+        docker:
+          - image: circleci/python:3.7
         steps:
           - checkout
-          - python/load-cache
-          - python/install-deps
-          - python/save-cache
           - run:
-              command: python -m pytest
+              command: pip install -r requirements/test.txt && python -m pytest
               name: Test
       build:
         executor: docker-publisher
@@ -24,7 +22,7 @@
           - run:
               name: Build Docker image
               command: |
-                docker build -t $IMAGE_NAME:latest  -f ./compose/production/django/Dockerfile .
+                docker build -t $IMAGE_NAME:latest .
           - run:
               name: Archive Docker image
               command: docker save -o image.tar $IMAGE_NAME

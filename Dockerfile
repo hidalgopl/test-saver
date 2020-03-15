@@ -1,4 +1,4 @@
-FROM python:3.7 as python-base
+FROM python:3.7-slim
 COPY requirements/requirements.txt .
 RUN pip install -r requirements.txt && rm -rf /root/.cache
 WORKDIR /code

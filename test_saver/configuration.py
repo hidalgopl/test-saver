@@ -17,7 +17,6 @@ class Config:
     db_host: str
     db_user: str
     db_pass: str
-    db_name: str
     rollbar_token: str
 
 

@@ -51,7 +51,6 @@ if __name__ == "__main__":
         user=config.db_user,
         password=config.db_pass,
         host=config.db_host,
-        database=config.db_name,
     )
     rollbar.init(
         config.rollbar_token,

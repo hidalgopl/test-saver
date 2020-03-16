@@ -32,7 +32,6 @@ def load_config() -> Config:
             db_host=os.environ["DB_HOST"],
             db_user=os.environ["DB_USER"],
             db_pass=os.environ["DB_PASS"],
-            db_name=os.environ["DB_NAME"],
             rollbar_token=os.environ["ROLLBAR_TOKEN"]
         )
     except KeyError:

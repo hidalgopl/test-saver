@@ -3,10 +3,12 @@ import logging
 import rollbar
 import ujson
 
+from test_saver import database
 from test_saver.configuration import load_config
 from test_saver.models import db
 from test_saver.nats_client import NATSHandler
 from test_saver.serializer import TestSuiteSerializer
+from test_saver.db_handlers import TestORMSerializer
 
 log = logging.getLogger(__name__)
 
@@ -15,10 +17,10 @@ async def message_handler(msg):
     subject = msg.subject
     reply = msg.reply
     data = ujson.loads(msg.data.decode())
-    serializer = TestSuiteSerializer(db=db, msg=data)
+    serializer = TestSuiteSerializer(db=db, db_handler_class=TestORMSerializer, msg=data)
     try:
         print("saving to db")
-        serializer.save_to_db()
+        await serializer.save_to_db()
         log.info(
             "Received a message on '{subject} {reply}': {data}".format(
                 subject=subject, reply=reply, data=data
@@ -32,6 +34,7 @@ async def message_handler(msg):
 
 
 async def run(loop, nats_url, nats_subject, rollbar):
+    await database.connect()
     nats_client = NATSHandler(nats_url, logger=log, loop=loop)
     await nats_client.connect()
     try:
@@ -46,17 +49,17 @@ async def run(loop, nats_url, nats_subject, rollbar):
 
 if __name__ == "__main__":
     config = load_config()
-    db.bind(
-        provider="postgres",
-        user=config.db_user,
-        password=config.db_pass,
-        host=config.db_host,
-    )
+    # db.bind(
+    #     provider="postgres",
+    #     user=config.db_user,
+    #     password=config.db_pass,
+    #     host=config.db_host,
+    # )
     rollbar.init(
         config.rollbar_token,
         "production"
     )
-    db.generate_mapping()
+    # db.generate_mapping()
     log.info("db binded")
     loop = asyncio.get_event_loop()
     nats_url = (

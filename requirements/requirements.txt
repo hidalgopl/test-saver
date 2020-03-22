@@ -3,3 +3,7 @@ asyncio-nats-client
 ujson
 psycopg2
 rollbar
+asyncpg
+orm~=0.1
+databases
+sqlalchemy

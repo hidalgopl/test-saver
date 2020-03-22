@@ -10,7 +10,7 @@ class TestSuiteSerializer:
     def __init__(
         self,
         msg: Any,
-        db: orm.Database,
+        db: orm.Database = None,
         db_handler_class: Union[TestPonySerializer, Callable] = TestPonySerializer,
     ):
         self.data = msg
@@ -32,7 +32,8 @@ class TestSuiteSerializer:
             user_id=self.data["user_id"]
         )
 
-    def save_to_db(self):
+    async def save_to_db(self):
         dto = self.decode_data()
-        serializer = self.db_handler_class(db=self.db, dto=dto)
-        serializer.save()
+        # serializer = self.db_handler_class(db=self.db, dto=dto)
+        serializer = self.db_handler_class(dto=dto)
+        await serializer.save()

@@ -44,7 +44,6 @@ class TestORMSerializer:
 
     # @database.transaction()
     async def save(self):
-        r_map = {"passed": 0, "failed": 1, "error": 2}
         async with database.transaction():
             suite = await SecTestSuiteA.objects.create(
                 url=self.dto.url,
@@ -53,16 +52,18 @@ class TestORMSerializer:
                 modified=datetime.utcnow(),
                 user_id=self.dto.user_id
             )
-        print(suite.id)
-        # TODO
         async with database.transaction():
             suite = await SecTestSuiteA.objects.get(id=self.dto.test_suite_id)
-            SecTestA.objects.
-            for test in self.dto.tests:
-                await SecTestA.objects.create(
-                    created=datetime.utcnow(),
-                    modified=datetime.utcnow(),
-                    code=test.test_code,
-                    result=r_map[test.result],
-                    suite=suite
-                )
+            tasks = [asyncio.create_task(self.create_test(suite, test)) for test in self.dto.tests]
+            await asyncio.gather(*tasks)
+
+    async def create_test(self, suite, test):
+        r_map = {"passed": 0, "failed": 1, "error": 2}
+        test = await SecTestA.objects.create(
+                created=datetime.utcnow(),
+                modified=datetime.utcnow(),
+                code=test.test_code,
+                result=r_map[test.result],
+                suite=suite
+            )
+        return test

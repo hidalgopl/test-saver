@@ -62,9 +62,7 @@ if __name__ == "__main__":
     # db.generate_mapping()
     log.info("db binded")
     loop = asyncio.get_event_loop()
-    nats_url = (
-        f"{config.nats_user}:{config.nats_pass}@{config.nats_host}:{config.nats_port}"
-    )
+    nats_url = config.nats_host
     print(f"using url: {nats_url}")
     try:
         loop.create_task(

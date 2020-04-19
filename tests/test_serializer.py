@@ -5,8 +5,8 @@ from test_saver.models import TestSuiteDTO as DTO
 from test_saver.serializer import TestSuiteSerializer as Serializer
 
 
-@pytest.fixture
-def db(autouse=True):
+@pytest.fixture(autouse=True)
+def db():
     yield orm.Database()
 
 

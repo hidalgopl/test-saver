@@ -12,7 +12,7 @@
         steps:
           - checkout
           - run:
-              command: pip install -r requirements/test.txt && python -m pytest
+              command: pip install -r requirements/test.txt && make test
               name: Test
       build:
         executor: docker-publisher

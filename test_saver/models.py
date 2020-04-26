@@ -37,6 +37,7 @@ class TestSuiteDTO:
     url: str
     tests: list
     user_id: str
+    origin: str
 
 
 class SecTest(db.Entity):
@@ -59,6 +60,7 @@ class SecTestSuiteA(orm.Model):
     created = orm.DateTime()
     modified = orm.DateTime()
     user_id = orm.String(max_length=256)
+    origin = orm.String(max_length=50)
 
 
 class SecTestA(orm.Model):

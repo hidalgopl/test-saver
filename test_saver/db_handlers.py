@@ -1,8 +1,7 @@
 import asyncio
-import time
+from datetime import datetime
 
 from pony import orm
-from datetime import datetime
 
 from test_saver import database
 from test_saver.models import TestSuiteDTO, SecTestSuite, SecTest, SecTestA, SecTestSuiteA
@@ -50,7 +49,8 @@ class TestORMSerializer:
                 id=self.dto.test_suite_id,
                 created=datetime.utcnow(),
                 modified=datetime.utcnow(),
-                user_id=self.dto.user_id
+                user_id=self.dto.user_id,
+                origin=self.dto.origin
             )
         async with database.transaction():
             suite = await SecTestSuiteA.objects.get(id=self.dto.test_suite_id)

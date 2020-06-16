@@ -1,0 +1,1 @@
+1. Get application logs: `stern test-saver`

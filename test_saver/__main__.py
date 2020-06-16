@@ -29,7 +29,7 @@ async def message_handler(msg):
 
 async def run(loop, nats_url, nats_subject, rollbar):
     await database.connect()
-    nats_client = NATSHandler(nats_url, logger=log, loop=loop)
+    nats_client = NATSHandler(nats_url, logger=logger, loop=loop)
     await nats_client.connect()
     try:
         await nats_client.sub(nats_subject, message_handler)

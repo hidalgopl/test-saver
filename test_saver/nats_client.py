@@ -4,10 +4,9 @@ from nats.aio.client import Client
 
 
 class NATSHandler:
-    def __init__(self, nats_url: str, logger: logger, loop):
+    def __init__(self, nats_url: str, loop):
         self.nats_client = Client()
         self.nats_url = nats_url
-        self.log = logger
         self.loop = loop
 
     async def connect(self):
@@ -18,7 +17,7 @@ class NATSHandler:
         )
 
     async def error_callback(self, msg):
-        self.log.exception(msg)
+        logger.exception(msg)
 
     async def sub(self, subject: str, handler):
         await self.nats_client.subscribe(

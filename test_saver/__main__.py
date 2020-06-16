@@ -13,15 +13,12 @@ from test_saver.db_handlers import TestORMSerializer
 
 async def message_handler(msg):
     subject = msg.subject
-    reply = msg.reply
     data = ujson.loads(msg.data.decode())
     serializer = TestSuiteSerializer(db=db, db_handler_class=TestORMSerializer, msg=data)
     try:
         await serializer.save_to_db()
         logger.info(
-            "Received a message on '{subject} {reply}': {data}".format(
-                subject=subject, reply=reply, data=data
-            )
+            f"Received a message on {subject}"
         )
     except KeyError as e:
         logger.info(f"msg malformed: {msg}")
@@ -29,7 +26,7 @@ async def message_handler(msg):
 
 async def run(loop, nats_url, nats_subject, rollbar):
     await database.connect()
-    nats_client = NATSHandler(nats_url, logger=logger, loop=loop)
+    nats_client = NATSHandler(nats_url, loop=loop)
     await nats_client.connect()
     try:
         await nats_client.sub(nats_subject, message_handler)
@@ -45,11 +42,9 @@ if __name__ == "__main__":
         "production"
     )
     loop = asyncio.get_event_loop()
-    nats_url = config.nats_host
-    logger.info(f"using url: {nats_url}")
     try:
         loop.create_task(
-            run(loop=loop, nats_url=nats_url, nats_subject=config.nats_subject, rollbar=rollbar)
+            run(loop=loop, nats_url=config.nats_host, nats_subject=config.nats_subject, rollbar=rollbar)
         )
         loop.run_forever()
     except KeyboardInterrupt:

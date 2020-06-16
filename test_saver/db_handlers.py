@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime
 
+from loguru import logger
 from pony import orm
 
 from test_saver import database
@@ -56,6 +57,7 @@ class TestORMSerializer:
             suite = await SecTestSuiteA.objects.get(id=self.dto.test_suite_id)
             tasks = [asyncio.create_task(self.create_test(suite, test)) for test in self.dto.tests]
             await asyncio.gather(*tasks)
+            logger.info(f"test_suite {self.dto.tests} saved")
 
     async def create_test(self, suite, test):
         r_map = {"passed": 0, "failed": 1, "error": 2}
@@ -66,4 +68,5 @@ class TestORMSerializer:
                 result=r_map[test.result],
                 suite=suite
             )
+        logger.info(f"test {test.id} saved")
         return test

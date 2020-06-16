@@ -8,6 +8,7 @@ from test_saver.models import TestSuiteDTO, SecTestSuite, SecTest, SecTestA, Sec
 
 
 class TestPonySerializer:
+    # TODO - delete
     def __init__(self, db: orm.Database, dto: TestSuiteDTO):
         self.db = db
         self.dto = dto
@@ -41,7 +42,6 @@ class TestORMSerializer:
     def __init__(self, dto: TestSuiteDTO):
         self.dto = dto
 
-    # @database.transaction()
     async def save(self):
         async with database.transaction():
             suite = await SecTestSuiteA.objects.create(

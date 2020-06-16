@@ -7,3 +7,4 @@ asyncpg
 orm~=0.1
 databases
 sqlalchemy
+loguru

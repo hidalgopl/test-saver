@@ -1,11 +1,10 @@
-import logging
-from typing import Callable
+from loguru import logger
 
 from nats.aio.client import Client
 
 
 class NATSHandler:
-    def __init__(self, nats_url: str, logger: logging.Logger, loop):
+    def __init__(self, nats_url: str, logger: logger, loop):
         self.nats_client = Client()
         self.nats_url = nats_url
         self.log = logger

@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from loguru import logger
 import rollbar
 import ujson
 
@@ -10,8 +10,6 @@ from test_saver.nats_client import NATSHandler
 from test_saver.serializer import TestSuiteSerializer
 from test_saver.db_handlers import TestORMSerializer
 
-log = logging.getLogger(__name__)
-
 
 async def message_handler(msg):
     subject = msg.subject
@@ -19,18 +17,14 @@ async def message_handler(msg):
     data = ujson.loads(msg.data.decode())
     serializer = TestSuiteSerializer(db=db, db_handler_class=TestORMSerializer, msg=data)
     try:
-        print("saving to db")
         await serializer.save_to_db()
-        log.info(
+        logger.info(
             "Received a message on '{subject} {reply}': {data}".format(
                 subject=subject, reply=reply, data=data
             )
         )
-        print("saved")
     except KeyError as e:
-        print("msg malformed")
-        print(e)
-        log.info("msg malformed")
+        logger.info(f"msg malformed: {msg}")
 
 
 async def run(loop, nats_url, nats_subject, rollbar):
@@ -40,37 +34,25 @@ async def run(loop, nats_url, nats_subject, rollbar):
     try:
         await nats_client.sub(nats_subject, message_handler)
     except Exception as e:
-        log.error(e)
+        logger.error(e)
         rollbar.report_exc_info()
 
 
-# async def graceful_shutdown(nats_client):
-#     await nats_client.graceful_shutdown()
-
 if __name__ == "__main__":
     config = load_config()
-    # db.bind(
-    #     provider="postgres",
-    #     user=config.db_user,
-    #     password=config.db_pass,
-    #     host=config.db_host,
-    # )
     rollbar.init(
         config.rollbar_token,
         "production"
     )
-    # db.generate_mapping()
-    log.info("db binded")
     loop = asyncio.get_event_loop()
     nats_url = config.nats_host
-    print(f"using url: {nats_url}")
+    logger.info(f"using url: {nats_url}")
     try:
         loop.create_task(
             run(loop=loop, nats_url=nats_url, nats_subject=config.nats_subject, rollbar=rollbar)
         )
         loop.run_forever()
     except KeyboardInterrupt:
-        print("keyboard interrupt")
+        logger.error("keyboard interrupt")
     finally:
-        # loop.run_until_complete(graceful_shutdown(nc))
         loop.close()

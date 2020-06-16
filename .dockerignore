@@ -4,3 +4,6 @@ tests/
 .idea
 *__pycache__*
 *.pyc
+chart
+.circleci
+Dockerfile

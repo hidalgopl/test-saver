@@ -8,7 +8,7 @@ image:
   repository: secureapi/test_saver
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "f36b84b0521dac19af9674cd0984b717d01378ae"
+  tag: "8d22c047d0d4e53c9dea072dd3c8b4ef6dee9eb3"
 
 imagePullSecrets:
   - name: "regcred"

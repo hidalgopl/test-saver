@@ -55,3 +55,5 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+natsUrl: "nats://nats-client:4222"

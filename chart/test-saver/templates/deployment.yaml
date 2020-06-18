@@ -60,6 +60,10 @@ spec:
                 configMapKeyRef:
                   name: boatswain
                   key: rollbar-token
+          volumeMounts:
+            - name: nkey
+              mountPath: "/code/nkey.txt"
+              readOnly: true
           ports:
             - name: http
               containerPort: 80
@@ -75,6 +79,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
+      volumes:
+        - name: nkey
+          secret:
+            secretName: internal-nkey
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

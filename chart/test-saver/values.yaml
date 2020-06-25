@@ -57,3 +57,5 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 natsUrl: "nats://nats-client:4222"
+db:
+  Url: "postgresql://user:pass@localhost:5432/db"
